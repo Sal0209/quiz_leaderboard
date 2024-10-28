@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz with Leaderboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .quiz, .leaderboard {
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .fixed-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030; /* Bootstrap default z-index for fixed top elements */
+            background-color: white; /* Ensure the timer has a background */
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .feedback {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .wrong {
+            color: #dc3545; /* Bootstrap danger color */
+        }
+        .timer {
+            font-size: 1.5em;
+            color: #dc3545;
+        }
+        .question-feedback {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="fixed-top text-center">
+    <div class="timer" id="timer">Time Left: 60 seconds</div>
+</div>
+
+<h1 class="text-center" style="margin-top: 80px;">Quiz with Leaderboard</h1>
+
+<!-- Quiz Form -->
+<div class="quiz">
+    <form id="quizForm">
+        <label for="name">Enter Your Name:</label>
+        <input type="text" id="name" name="name" required class="form-control"><br><br>
+
+        <h2>Answer the following 10 questions:</h2>
+        <ol>
+            <li>What is 2 + 2?
+                <br> 
+                <input type="radio" name="q1" value="A" required>  3<br>
+                <input type="radio" name="q1" value="B"> 4<br>
+                <input type="radio" name="q1" value="C"> 5<br>
+                <input type="radio" name="q1" value="D"> 6<br><br>
+            </li>
+            <li>What is the capital of India?
+                <br> 
+                <input type="radio" name="q2" value="A" required> New Delhi<br>
+                <input type="radio" name="q2" value="B"> Kolkata<br>
+                <input type="radio" name="q2" value="C"> Mumbai<br>
+                <input type="radio" name="q2" value="D"> Chennai<br><br>
+            </li>
+            <li>What is the chemical symbol for water?
+                <br> 
+                <input type="radio" name="q3" value="A" required> H<br>
+                <input type="radio" name="q3" value="B"> O<br>
+                <input type="radio" name="q3" value="C"> H2O<br>
+                <input type="radio" name="q3" value="D"> HO<br><br>
+            </li>
+            <li>Who wrote 'Romeo and Juliet'?
+                <br> 
+                <input type="radio" name="q4" value="A" required> Charles Dickens<br>
+                <input type="radio" name="q4" value="B"> William Shakespeare<br>
+                <input type="radio" name="q4" value="C"> Mark Twain<br>
+                <input type="radio" name="q4" value="D"> Leo Tolstoy<br><br>
+            </li>
+            <li>What is the tallest mountain in the world?
+                <br> 
+                <input type="radio" name="q5" value="A" required> Mount Everest<br>
+                <input type="radio" name="q5" value="B"> K2<br>
+                <input type="radio" name="q5" value="C"> Mont Blanc<br>
+                <input type="radio" name="q5" value="D"> Kilimanjaro<br><br>
+            </li>
+            <li>Which is the largest ocean on Earth?
+                <br> 
+                <input type="radio" name="q6" value="A" required> Atlantic Ocean<br>
+                <input type="radio" name="q6" value="B"> Indian Ocean<br>
+                <input type="radio" name="q6" value="C"> Arctic Ocean<br>
+                <input type="radio" name="q6" value="D"> Pacific Ocean<br><br>
+            </li>
+            <li>How many planets are there in the solar system?
+                <br> 
+                <input type="radio" name="q7" value="A" required> 9<br>
+                <input type="radio" name="q7" value="B"> 7<br>
+                <input type="radio" name="q7" value="C"> 8<br>
+                <input type="radio" name="q7" value="D"> 10<br><br>
+            </li>
+            <li>Which is the longest river in the world?
+                <br> 
+                <input type="radio" name="q8" value="A" required> Amazon<br>
+                <input type="radio" name="q8" value="B"> Nile<br>
+                <input type="radio" name="q8" value="C"> Yangtze<br>
+                <input type="radio" name="q8" value="D"> Mississippi<br><br>
+            </li>
+            <li>What is the smallest prime number?
+                <br> 
+                <input type="radio" name="q9" value="A" required> 2<br>
+                <input type="radio" name="q9" value="B"> 1<br>
+                <input type="radio" name="q9" value="C"> 3<br>
+                <input type="radio" name="q9" value="D"> 5<br><br>
+            </li>
+            <li>Which planet is known as the Red Planet?
+                <br> 
+                <input type="radio" name="q10" value="A" required> Earth<br>
+                <input type="radio" name="q10" value="B"> Jupiter<br>
+                <input type="radio" name="q10" value="C"> Venus<br>
+                <input type="radio" name="q10" value="D"> Mars<br><br>
+            </li>
+        </ol>
+        <button type="submit" class="btn btn-primary">Submit Quiz</button>
+        <button type="button" id="resetButton" class="btn btn-secondary">Reset Quiz</button>
+    </form>
+    <div id="feedback" class="feedback"></div>
+</div>
+
+<div class="leaderboard hidden">
+    <h2>Leaderboard</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardData">
+            <!-- Dynamic leaderboard data will be inserted here -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+let timeLeft = 60; // Total time in seconds
+let timerId = setInterval(() => {
+    if (timeLeft <= 0) {
+        clearInterval(timerId);
+        alert("Time's up!");
+        $("#quizForm").submit(); // Automatically submit the quiz when time runs out
+    }
+    $("#timer").text("Time Left: " + timeLeft + " seconds");
+    timeLeft--;
+}, 1000);
+
+$("#quizForm").on("submit", function (event) {
+    event.preventDefault(); // Prevent form submission
+
+    clearInterval(timerId); // Stop the timer
+
+    const answers = ['B', 'A', 'C', 'B', 'A', 'D', 'C', 'B', 'A', 'D'];
+    let userAnswers = [];
+    let score = 0;
+    let feedbackHTML = '';
+
+    // Collect user answers and calculate score
+    for (let i = 1; i <= answers.length; i++) {
+        const userAnswer = $("input[name='q" + i + "']:checked").val();
+        userAnswers.push(userAnswer); // Collect user answers
+        if (userAnswer === answers[i - 1]) {
+            score++;
+            feedbackHTML += `<div class="question-feedback">Question ${i}: <span class="feedback">Correct!</span></div>`;
+        } else {
+            feedbackHTML += `<div class="question-feedback">Question ${i}: <span class="wrong">Wrong! Correct answer is ${answers[i - 1]}.</span></div>`;
+        }
+    }
+
+    $("#feedback").html(`<h4>Your score: ${score}/10</h4>`);
+    $(".question-feedback").remove(); // Clear previous feedback
+    $(".quiz").append(feedbackHTML);
+
+    // Send the score and name to the server via AJAX
+    const name = $("#name").val();
+    $.ajax({
+        type: 'POST',
+        url: 'leaderboard.php',
+        data: { name: name, answers: userAnswers },
+        dataType: 'json',
+        success: function(response) {
+            // Fetch the updated leaderboard
+            updateLeaderboard();
+        },
+        error: function() {
+            alert('There was an error processing your request. Please try again.');
+        }
+    });
+});
+
+// Function to update the leaderboard
+function updateLeaderboard() {
+    $.get('leaderboard.php', function(data) {
+        let leaderboardHtml = '';
+        $.each(data, function(index, user) {
+            leaderboardHtml += '<tr><td>' + user.rank + '</td><td>' + user.name + '</td><td>' + user.score + '</td></tr>';
+        });
+        $('#leaderboardData').html(leaderboardHtml);
+        $('.leaderboard').removeClass('hidden'); // Show leaderboard after fetching
+    }, 'json');
+}
+
+// Reset button functionality
+$("#resetButton").on("click", function() {
+    location.reload(); // Reload the page to reset everything
+});
+</script>
+</body>
+</html>
